@@ -1,6 +1,8 @@
 ## Upcoming release
 * Bump supported KFP versions to kfp>=2.0.0b10,<=2.4.0
 * Add LLM Eval pipeline parameter for customizing eval dataset reference ground truth field
+* Create new eval dataset preprocessor for formatting eval dataset in tuning dataset format.
+* Support tuning datast format in `LLM Eval Text Generation` and `Text Classification` Pipelines. Include new `LLM Eval Preprocessor` component in both pipelines.
 * Fix the output parameter `output_dir` of `preview.automl.vision.DataConverterJobOp`.
 
 ## Release 2.5.0
