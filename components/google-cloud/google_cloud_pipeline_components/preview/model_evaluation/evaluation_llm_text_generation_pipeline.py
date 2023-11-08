@@ -15,11 +15,13 @@
 
 from typing import Dict, List, NamedTuple
 
+from google_cloud_pipeline_components._implementation.model_evaluation import LLMEvaluationPreprocessorOp
 from google_cloud_pipeline_components._implementation.model_evaluation import LLMEvaluationTextGenerationOp
 from google_cloud_pipeline_components._implementation.model_evaluation import ModelImportEvaluationOp
 from google_cloud_pipeline_components.types.artifact_types import VertexModel
 from google_cloud_pipeline_components.v1.batch_predict_job import ModelBatchPredictOp
 from kfp import dsl
+
 
 _PIPELINE_NAME = 'evaluation-llm-text-generation-pipeline'
 
@@ -92,7 +94,9 @@ def evaluation_llm_text_generation_pipeline(  # pylint: disable=dangerous-defaul
       location=location,
       model=get_vertex_model_task.outputs['artifact'],
       job_display_name='evaluation-batch-predict-{{$.pipeline_job_uuid}}-{{$.pipeline_task_uuid}}',
-      gcs_source_uris=batch_predict_gcs_source_uris,
+      gcs_source_uris=LLMEvaluationPreprocessorOp(
+          gcs_source_uris=batch_predict_gcs_source_uris
+      ).output,
       instances_format=batch_predict_instances_format,
       predictions_format=batch_predict_predictions_format,
       gcs_destination_output_uri_prefix=batch_predict_gcs_destination_output_uri,
