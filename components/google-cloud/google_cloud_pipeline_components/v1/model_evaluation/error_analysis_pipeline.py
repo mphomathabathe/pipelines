@@ -15,7 +15,6 @@
 from typing import List
 
 from google_cloud_pipeline_components import _placeholders
-from google_cloud_pipeline_components._implementation.model import GetVertexModelOp
 from google_cloud_pipeline_components._implementation.model_evaluation import ErrorAnalysisAnnotationOp
 from google_cloud_pipeline_components._implementation.model_evaluation import EvaluatedAnnotationOp
 from google_cloud_pipeline_components._implementation.model_evaluation import EvaluationDatasetPreprocessorOp as DatasetPreprocessorOp
@@ -24,6 +23,7 @@ from google_cloud_pipeline_components._implementation.model_evaluation import Mo
 from google_cloud_pipeline_components._implementation.model_evaluation import ModelImportEvaluationOp
 from google_cloud_pipeline_components.v1.batch_predict_job import ModelBatchPredictOp
 from google_cloud_pipeline_components.v1.dataset import GetVertexDatasetOp
+from google_cloud_pipeline_components.v1.model import ModelGetOp
 from google_cloud_pipeline_components.v1.model_evaluation.classification_component import model_evaluation_classification as ModelEvaluationClassificationOp
 from kfp import dsl
 
@@ -70,9 +70,9 @@ def vision_model_error_analysis_pipeline(  # pylint: disable=dangerous-default-v
     model_name: The Vertex model resource name to be imported and used for batch prediction, in the format of `projects/{project}/locations/{location}/models/{model}` or `projects/{project}/locations/{location}/models/{model}@{model_version_id or model_version_alias}`
     batch_predict_gcs_destination_output_uri: The Google Cloud Storage location of the directory where the output is to be written to. In the given directory a new directory is created. Its name is `prediction-<model-display-name>-<job-create-time>`, where timestamp is in YYYY-MM-DDThh:mm:ss.sssZ ISO-8601 format. Inside of it files `predictions_0001.<extension>`, `predictions_0002.<extension>`, ..., `predictions_N.<extension>` are created where `<extension>` depends on chosen `predictions_format`, and N may equal 0001 and depends on the total number of successfully predicted instances. If the Model has both `instance` and `prediction` schemata defined then each such file contains predictions as per the `predictions_format`. If prediction for any instance failed (partially or completely), then an additional `errors_0001.<extension>`, `errors_0002.<extension>`,..., `errors_N.<extension>` files are created (N depends on total number of failed predictions). These files contain the failed instances, as per their schema, followed by an additional `error` field which as value has `google.rpc.Status` containing only `code` and `message` fields. For more details about this output config, see https://cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.batchPredictionJobs#OutputConfig.
     test_dataset_resource_name: A Vertex dataset resource name of the test dataset. If `test_dataset_storage_source_uris` is also provided, this argument will override the GCS source.
-    test_dataset_annotation_set_name: A string of the annotation_set resource name containing the ground truth of the test datset used for evaluation.
+    test_dataset_annotation_set_name: A string of the annotation_set resource name containing the ground truth of the test dataset used for evaluation.
     training_dataset_resource_name: A Vertex dataset resource name of the training dataset. If `training_dataset_storage_source_uris` is also provided, this argument will override the GCS source.
-    training_dataset_annotation_set_name: A string of the annotation_set resource name containing the ground truth of the test datset used for feature extraction.
+    training_dataset_annotation_set_name: A string of the annotation_set resource name containing the ground truth of the test dataset used for feature extraction.
     test_dataset_storage_source_uris: Google Cloud Storage URI(-s) to unmanaged test datasets.`jsonl` is currently the only allowed format. If `test_dataset` is also provided, this field will be overridden by the provided Vertex Dataset.
     training_dataset_storage_source_uris: Google Cloud Storage URI(-s) to unmanaged test datasets.`jsonl` is currently the only allowed format. If `training_dataset` is also provided, this field will be overridden by the provided Vertex Dataset.
     batch_predict_instances_format: The format in which instances are given, must be one of the Model's supportedInputStorageFormats. For more details about this input config, see https://cloud.google.com/vertex-ai/docs/reference/rest/v1/projects.locations.batchPredictionJobs#InputConfig.
@@ -118,7 +118,7 @@ def vision_model_error_analysis_pipeline(  # pylint: disable=dangerous-default-v
         training_dataset=get_training_dataset_task.outputs['dataset'],
         training_dataset_annotation_set_name=training_dataset_annotation_set_name,
     )
-    get_model_task = GetVertexModelOp(model_name=model_name)
+    get_model_task = ModelGetOp(model_name=model_name)
     batch_predict_task = ModelBatchPredictOp(
         project=project,
         location=location,
@@ -240,7 +240,7 @@ def vision_model_error_analysis_pipeline(  # pylint: disable=dangerous-default-v
         test_dataset_storage_source_uris=test_dataset_storage_source_uris,
         training_dataset_storage_source_uris=training_dataset_storage_source_uris,
     )
-    get_model_task = GetVertexModelOp(model_name=model_name)
+    get_model_task = ModelGetOp(model_name=model_name)
     batch_predict_task = ModelBatchPredictOp(
         project=project,
         location=location,

@@ -15,12 +15,12 @@
 from typing import Any, List, NamedTuple
 
 from google_cloud_pipeline_components import _placeholders
-from google_cloud_pipeline_components._implementation.model import GetVertexModelOp
 from google_cloud_pipeline_components._implementation.model_evaluation import ModelImportEvaluationOp
 from google_cloud_pipeline_components._implementation.model_evaluation import TargetFieldDataRemoverOp
 from google_cloud_pipeline_components.types.artifact_types import ClassificationMetrics
 from google_cloud_pipeline_components.types.artifact_types import RegressionMetrics
 from google_cloud_pipeline_components.v1.batch_predict_job import ModelBatchPredictOp
+from google_cloud_pipeline_components.v1.model import ModelGetOp
 from google_cloud_pipeline_components.v1.model_evaluation.classification_component import model_evaluation_classification as ModelEvaluationClassificationOp
 from google_cloud_pipeline_components.v1.model_evaluation.regression_component import model_evaluation_regression as ModelEvaluationRegressionOp
 import kfp
@@ -106,7 +106,7 @@ def evaluation_automl_unstructure_data_classification_pipeline(  # pylint: disab
       evaluation_resource_name=str,
   )
 
-  get_model_task = GetVertexModelOp(model_name=model_name)
+  get_model_task = ModelGetOp(model_name=model_name)
 
   # Remove the ground truth from the given GCS data.
   # This is required for many models as Vertex Batch Prediction can not have the
@@ -271,7 +271,7 @@ def evaluation_automl_unstructure_data_regression_pipeline(  # pylint: disable=d
       evaluation_resource_name=str,
   )
 
-  get_model_task = GetVertexModelOp(model_name=model_name)
+  get_model_task = ModelGetOp(model_name=model_name)
 
   # Remove the ground truth from the given GCS data.
   # This is required for many models as Vertex Batch Prediction can not have the

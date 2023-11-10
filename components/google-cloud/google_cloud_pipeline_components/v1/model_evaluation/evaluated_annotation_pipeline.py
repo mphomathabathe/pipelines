@@ -15,13 +15,13 @@
 from typing import List
 
 from google_cloud_pipeline_components import _placeholders
-from google_cloud_pipeline_components._implementation.model import GetVertexModelOp
 from google_cloud_pipeline_components._implementation.model_evaluation import EvaluatedAnnotationOp
 from google_cloud_pipeline_components._implementation.model_evaluation import EvaluationDatasetPreprocessorOp as DatasetPreprocessorOp
 from google_cloud_pipeline_components._implementation.model_evaluation import ModelImportEvaluatedAnnotationOp
 from google_cloud_pipeline_components._implementation.model_evaluation import ModelImportEvaluationOp
 from google_cloud_pipeline_components.v1.batch_predict_job import ModelBatchPredictOp
 from google_cloud_pipeline_components.v1.dataset import GetVertexDatasetOp
+from google_cloud_pipeline_components.v1.model import ModelGetOp
 from google_cloud_pipeline_components.v1.model_evaluation.classification_component import model_evaluation_classification as ModelEvaluationClassificationOp
 from kfp import dsl
 
@@ -92,7 +92,7 @@ def evaluated_annotation_pipeline(  # pylint: disable=dangerous-default-value
       test_dataset_annotation_set_name=test_dataset_annotation_set_name,
       test_dataset_storage_source_uris=test_dataset_storage_source_uris,
   )
-  get_model_task = GetVertexModelOp(model_name=model_name)
+  get_model_task = ModelGetOp(model_name=model_name)
   batch_predict_task = ModelBatchPredictOp(
       project=project,
       location=location,

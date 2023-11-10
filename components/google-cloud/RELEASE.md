@@ -4,6 +4,8 @@
 * Fix the output parameter `output_dir` of `preview.automl.vision.DataConverterJobOp`.
 * Fix batch prediction model parameters payload sanitization error .
 * Group `preview.llm.rlhf_pipeline` components for better readability.
+* Group `preview.llm.rlhf_pipeline` components for better readability.
+* Add Vertex model get method.
 
 ## Release 2.5.0
 * Upload tensorboard metrics from `preview.llm.rlhf_pipeline` if a `tensorboard_resource_id` is provided at runtime.
